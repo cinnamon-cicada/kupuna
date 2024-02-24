@@ -1,6 +1,10 @@
-# kupuna
+# KUPUNA
 An exercise app for the elderly
 
+## Instructions
+> Code should work for components that do not require the backend
+> To gain full access to the project, with functioning backend components, email eluo.5230@gmail.com; FlutterFlow hides certain files
+> See latest build at: https://app.flutterflow.io/run/Ij1gEMqEJePJvIcSnZCM
 
 # FlutterFlow UI
 Credits to: https://github.com/FlutterFlow/flutterflow-ui
