@@ -1,0 +1,344 @@
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_timer.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import 'timer_model.dart';
+export 'timer_model.dart';
+
+class TimerWidget extends StatefulWidget {
+  const TimerWidget({
+    super.key,
+    required this.generatedExercises,
+    required this.sessionIDParam,
+  });
+
+  final String? generatedExercises;
+  final DocumentReference? sessionIDParam;
+
+  @override
+  State<TimerWidget> createState() => _TimerWidgetState();
+}
+
+class _TimerWidgetState extends State<TimerWidget> {
+  late TimerModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => TimerModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+          automaticallyImplyLeading: false,
+          leading: FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 60,
+            icon: Icon(
+              Icons.close_rounded,
+              color: FlutterFlowTheme.of(context).primaryText,
+              size: 30,
+            ),
+            onPressed: () {
+              print('IconButton pressed ...');
+            },
+          ),
+          title: Text(
+            'Active Session',
+            style: FlutterFlowTheme.of(context).titleMedium.override(
+                  fontFamily: 'Readex Pro',
+                  color: FlutterFlowTheme.of(context).primaryText,
+                ),
+          ),
+          actions: [],
+          centerTitle: true,
+          elevation: 0,
+        ),
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 44, 0, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(32, 8, 32, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Time Left',
+                          style: FlutterFlowTheme.of(context).headlineSmall,
+                        ),
+                        FlutterFlowIconButton(
+                          borderColor: FlutterFlowTheme.of(context).alternate,
+                          borderRadius: 30,
+                          borderWidth: 2,
+                          buttonSize: 44,
+                          fillColor:
+                              FlutterFlowTheme.of(context).secondaryBackground,
+                          icon: Icon(
+                            Icons.refresh_rounded,
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            size: 20,
+                          ),
+                          onPressed: () async {
+                            _model.timerController.onResetTimer();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 32, 0, 24),
+                        child: FlutterFlowTimer(
+                          initialTime: _model.timerMilliseconds,
+                          getDisplayTime: (value) =>
+                              StopWatchTimer.getDisplayTime(
+                            value,
+                            hours: false,
+                          ),
+                          controller: _model.timerController,
+                          onChanged: (value, displayTime, shouldUpdate) {
+                            _model.timerMilliseconds = value;
+                            _model.timerValue = displayTime;
+                            if (shouldUpdate) setState(() {});
+                          },
+                          textAlign: TextAlign.center,
+                          style: FlutterFlowTheme.of(context)
+                              .displaySmall
+                              .override(
+                                fontFamily: 'Outfit',
+                                fontSize: 64,
+                                fontWeight: FontWeight.normal,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FlutterFlowIconButton(
+                        borderColor: FlutterFlowTheme.of(context).alternate,
+                        borderRadius: 30,
+                        borderWidth: 2,
+                        buttonSize: 60,
+                        icon: Icon(
+                          Icons.pause_rounded,
+                          color: FlutterFlowTheme.of(context).primaryText,
+                          size: 30,
+                        ),
+                        onPressed: () async {
+                          _model.timerController.onStopTimer();
+                        },
+                      ),
+                      FlutterFlowIconButton(
+                        borderColor: Color(0xFF87AC75),
+                        borderRadius: 30,
+                        borderWidth: 2,
+                        buttonSize: 60,
+                        fillColor: Color(0x5187AC75),
+                        icon: Icon(
+                          Icons.play_arrow_rounded,
+                          color: Color(0xFF87AC75),
+                          size: 36,
+                        ),
+                        onPressed: () async {
+                          _model.timerController.onStartTimer();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional(0, 0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 5,
+                            color: Color(0x34111417),
+                            offset: Offset(0, -2),
+                          )
+                        ],
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(0),
+                          bottomRight: Radius.circular(0),
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(15, 12, 15, 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 12, 0, 0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0, 0, 4, 0),
+                                        child: Text(
+                                          'Workout ',
+                                          style: FlutterFlowTheme.of(context)
+                                              .headlineSmall,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Push Ups',
+                                        style: FlutterFlowTheme.of(context)
+                                            .headlineSmall
+                                            .override(
+                                              fontFamily: 'Outfit',
+                                              color: Color(0xFF87AC75),
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 12, 0, 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Current Set',
+                                          style: FlutterFlowTheme.of(context)
+                                              .headlineMedium,
+                                        ),
+                                        Text(
+                                          '5 minutes',
+                                          style: FlutterFlowTheme.of(context)
+                                              .headlineMedium
+                                              .override(
+                                                fontFamily: 'Outfit',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    'Pushups are an exercise in which a person, keeping a prone position, with the hands palms down under the shoulders, the balls of the feet on the ground, and the back straight, pushes the body up and lets it down by an alternate straightening and bending of the arms.',
+                                    style: FlutterFlowTheme.of(context)
+                                        .labelMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 24, 0, 44),
+                              child: FFButtonWidget(
+                                onPressed: () async {
+                                  context.pushNamed(
+                                    'Congratulations',
+                                    extra: <String, dynamic>{
+                                      kTransitionInfoKey: TransitionInfo(
+                                        hasTransition: true,
+                                        transitionType:
+                                            PageTransitionType.bottomToTop,
+                                        duration: Duration(milliseconds: 1000),
+                                      ),
+                                    },
+                                  );
+                                },
+                                text: 'Complete Workout',
+                                options: FFButtonOptions(
+                                  width: double.infinity,
+                                  height: 50,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 0, 0),
+                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 0, 0),
+                                  color: Color(0xFF87AC75),
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .override(
+                                        fontFamily: 'Readex Pro',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBackground,
+                                      ),
+                                  elevation: 2,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
